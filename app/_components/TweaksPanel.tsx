@@ -19,6 +19,8 @@ interface TweaksPanelProps {
 
 export default function TweaksPanel({ tweaks, onChange, onClose }: TweaksPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
   // Focus trap + Escape to close + focus restoration on unmount
   useEffect(() => {
@@ -26,21 +28,24 @@ export default function TweaksPanel({ tweaks, onChange, onClose }: TweaksPanelPr
     const panel = panelRef.current;
     if (!panel) return;
 
-    // Move focus to first focusable element inside the panel
-    const focusable = Array.from(
-      panel.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
-    );
-    focusable[0]?.focus();
+    const getFocusable = () =>
+      Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+
+    getFocusable()[0]?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
-      if (e.key === 'Tab' && focusable.length > 0) {
+      if (e.key === 'Tab') {
+        const focusable = getFocusable();
+        if (focusable.length === 0) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
         if (e.shiftKey && document.activeElement === first) {
@@ -56,9 +61,9 @@ export default function TweaksPanel({ tweaks, onChange, onClose }: TweaksPanelPr
     panel.addEventListener('keydown', handleKeyDown);
     return () => {
       panel.removeEventListener('keydown', handleKeyDown);
-      previousFocus?.focus();   // restore focus to trigger element on close
+      previousFocus?.focus();
     };
-  }, [onClose]);
+  }, []); // empty deps: run only on mount/unmount
 
   return (
     <div
@@ -103,21 +108,7 @@ export default function TweaksPanel({ tweaks, onChange, onClose }: TweaksPanelPr
       </TweakRow>
 
       <TweakRow label="Accent">
-        <div role="radiogroup" aria-label="Accent colour" style={{ display: 'flex', gap: 8 }}>
-          {Object.entries(ACCENT_MAP).map(([k, c]) => (
-            <button
-              key={k}
-              role="radio"
-              aria-checked={tweaks.accent === k}
-              aria-label={`Accent colour: ${k}`}
-              onClick={() => onChange('accent', k)}
-              style={{
-                width: 26, height: 26, borderRadius: 100, background: c,
-                outline: tweaks.accent === k ? '2px solid var(--ink)' : 'none', outlineOffset: 2,
-              }}
-            />
-          ))}
-        </div>
+        <AccentSwatches tweaks={tweaks} onChange={onChange} />
       </TweakRow>
     </div>
   );
@@ -140,10 +131,27 @@ function Segmented({ value, onChange, options, label }: {
   options: [string, string][];
   label: string;
 }) {
+  const groupRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const idx = options.findIndex(([v]) => v === value);
+    const next = e.key === 'ArrowRight'
+      ? (idx + 1) % options.length
+      : (idx - 1 + options.length) % options.length;
+    onChange(options[next][0]);
+    // Move focus to the next button
+    const buttons = groupRef.current?.querySelectorAll<HTMLElement>('button');
+    buttons?.[next]?.focus();
+  };
+
   return (
     <div
+      ref={groupRef}
       role="radiogroup"
       aria-label={label}
+      onKeyDown={handleKeyDown}
       style={{ display: 'flex', background: 'var(--bg-2)', padding: 3, borderRadius: 100, border: '1px solid var(--line)' }}
     >
       {options.map(([v, optionLabel]) => (
@@ -151,6 +159,7 @@ function Segmented({ value, onChange, options, label }: {
           key={v}
           role="radio"
           aria-checked={value === v}
+          tabIndex={value === v ? 0 : -1}
           onClick={() => onChange(v)}
           style={{
             flex: 1, padding: '6px 10px', borderRadius: 100,
@@ -160,6 +169,48 @@ function Segmented({ value, onChange, options, label }: {
             transition: 'all 0.15s',
           }}
         >{optionLabel}</button>
+      ))}
+    </div>
+  );
+}
+
+function AccentSwatches({ tweaks, onChange }: { tweaks: ITweaks; onChange: (key: keyof ITweaks, value: string) => void }) {
+  const groupRef = useRef<HTMLDivElement>(null);
+  const accentKeys = Object.keys(ACCENT_MAP);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const idx = accentKeys.indexOf(tweaks.accent);
+    const next = e.key === 'ArrowRight'
+      ? (idx + 1) % accentKeys.length
+      : (idx - 1 + accentKeys.length) % accentKeys.length;
+    onChange('accent', accentKeys[next]);
+    const buttons = groupRef.current?.querySelectorAll<HTMLElement>('button');
+    buttons?.[next]?.focus();
+  };
+
+  return (
+    <div
+      ref={groupRef}
+      role="radiogroup"
+      aria-label="Accent colour"
+      onKeyDown={handleKeyDown}
+      style={{ display: 'flex', gap: 8 }}
+    >
+      {Object.entries(ACCENT_MAP).map(([k, c]) => (
+        <button
+          key={k}
+          role="radio"
+          aria-checked={tweaks.accent === k}
+          aria-label={k.charAt(0).toUpperCase() + k.slice(1)}
+          tabIndex={tweaks.accent === k ? 0 : -1}
+          onClick={() => onChange('accent', k)}
+          style={{
+            width: 26, height: 26, borderRadius: 100, background: c,
+            outline: tweaks.accent === k ? '2px solid var(--ink)' : 'none', outlineOffset: 2,
+          }}
+        />
       ))}
     </div>
   );

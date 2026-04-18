@@ -17,10 +17,14 @@ export default function DepartureRow({ d, onClick, verbose = false }: DepartureR
   const timeStr = actual.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <button onClick={onClick} style={{
-      width: '100%', padding: '14px 0', display: 'flex', gap: 14, alignItems: 'center',
-      borderBottom: '1px solid var(--line-2)', textAlign: 'left',
-    }}>
+    <button
+      onClick={onClick}
+      aria-label={`${d.direction}, vertrekt ${timeStr}${d.delayMinutes > 0 ? `, ${d.delayMinutes} min vertraging` : ', op tijd'}${d.cancelled ? ', geannuleerd' : ''}. Klik voor reisdetails.`}
+      style={{
+        width: '100%', padding: '14px 0', display: 'flex', gap: 14, alignItems: 'center',
+        borderBottom: '1px solid var(--line-2)', textAlign: 'left',
+      }}
+    >
       <div style={{ width: 54 }}>
         <div className="serif num" style={{ fontSize: 24, lineHeight: 1, letterSpacing: '-0.02em' }}>{timeStr}</div>
         {d.delayMinutes > 0 && (

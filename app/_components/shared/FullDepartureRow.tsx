@@ -19,11 +19,15 @@ export default function FullDepartureRow({ d, onOpen, verbose = false, crowdingS
   const plannedStr = planned.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <button onClick={onOpen} style={{
-      width: '100%', padding: '16px 0', display: 'grid',
-      gridTemplateColumns: '72px 1fr auto', gap: 14, alignItems: 'start',
-      borderBottom: '1px solid var(--line-2)', textAlign: 'left',
-    }}>
+    <button
+      onClick={onOpen}
+      aria-label={`${d.direction}, vertrekt ${timeStr}${d.delayMinutes > 0 ? `, ${d.delayMinutes} min vertraging` : ', op tijd'}${d.cancelled ? ', geannuleerd' : ''}. Klik voor reisdetails.`}
+      style={{
+        width: '100%', padding: '16px 0', display: 'grid',
+        gridTemplateColumns: '72px 1fr auto', gap: 14, alignItems: 'start',
+        borderBottom: '1px solid var(--line-2)', textAlign: 'left',
+      }}
+    >
       <div>
         <div className="serif num" style={{
           fontSize: 28, lineHeight: 1, letterSpacing: '-0.02em',

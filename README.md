@@ -1,35 +1,73 @@
-# Transit
+# Pulse
 
-> This project is a test bed for [Claude design](https://claude.ai).
+An editorial transit companion for daily commuters on the Dutch rail network (NS). Goes beyond a departure board — surfaces live network state, personal commute rhythm, and per-carriage crowding guidance.
 
-Real-time train departure app for Dutch train stations, built with Next.js 15 and the NS (Nederlandse Spoorwegen) API.
+Live at **[transit-blush.vercel.app](https://transit-blush.vercel.app)**
 
-## What it does
+---
 
-Two views:
+## Views
 
-1. **Home** — search for a station by name, get a list of matching stations
-2. **Departures** (`/departures/[code]`) — show real-time departures for a selected station: time, direction, platform, train type
+| Tab | Purpose |
+|-----|---------|
+| **Rhythm** | Your personal commute. Next train hero card, delay anomalies vs. your 12-week baseline, later-today departures. |
+| **Pulse** | Live network map. Animated trains, disruptions rendered as weather systems (storm / fog / sun). |
+| **Journey** | Per-train detail. Platform choreography (which carriage is quietest), stop timeline, delay explanation. |
+| **Search** | Find any station. Tap to open its full departure board. |
 
-## Data
-
-Stations have: `id`, `name`, `code` (e.g. `ASD` for Amsterdam Centraal)
-
-Departures have: `direction`, `plannedDateTime`, `actualDateTime`, `trainCategory`, `plannedTrack`, `actualTrack`, `cancelled`
+---
 
 ## Stack
 
-- Next.js 15 (App Router, TypeScript)
-- SCSS Modules
-- NS API (`gateway.apiportal.ns.nl`)
-- Vercel
+- **Next.js 16** — App Router, TypeScript, server + client components
+- **NS API** (`gateway.apiportal.ns.nl`) — live departures and disruptions
+- **CSS custom properties** — OKLCH design tokens, light + dark theme
+- **Google Fonts** — Instrument Serif, JetBrains Mono, Inter
+- **Vercel** — deployment
 
-## Routes
+---
 
-- `/` — station search
-- `/departures/[id]` — departure board for station code
-- `/api/stations?q=` — internal API route for station search
+## API Routes
 
-## Design intent
+| Route | Description |
+|-------|-------------|
+| `GET /api/stations?q=` | Station search (proxies NS API) |
+| `GET /api/departures/[code]` | Live departures for a station code |
+| `GET /api/disruptions` | Live disruptions; falls back to mock |
 
-Clean, minimal, mobile-first. Inspired by departure boards. Fast and functional — no unnecessary chrome.
+---
+
+## Environment
+
+Copy `.env.local.example` to `.env.local` and add your NS API key:
+
+```
+NS_API=your_ns_api_key
+```
+
+Get a key at [apiportal.ns.nl](https://apiportal.ns.nl). Without a key the app falls back to mock data.
+
+---
+
+## Development
+
+```bash
+npm install
+npm run dev      # localhost:3000
+npm run build    # production build check
+```
+
+---
+
+## Design system
+
+Tokens live in `app/globals.css`. OKLCH color palette, two themes:
+
+```
+--bg / --bg-2 / --bg-3   backgrounds
+--ink / --ink-2 / --ink-3  text hierarchy
+--accent                   burnt orange — live / now
+--ok / --warn / --bad      status colors
+```
+
+Crowding display is user-configurable (bars / dots / heatmap) via the tweaks panel (⊞ button above the tab bar).

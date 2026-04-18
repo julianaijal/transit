@@ -78,6 +78,18 @@ export default function PulseView({ onOpenJourney, onOpenStation }: PulseViewPro
 
   return (
     <div className="view fade-up" style={{ paddingBottom: 0 }}>
+      {/* Screen reader: disruption announcements */}
+      <div aria-live="assertive" aria-atomic="true" className="sr-only">
+        {disruptions.filter(d => d.severity > 0.3).map(d => d.label).join(', ')}
+      </div>
+
+      {/* Screen reader: selected train announcement */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {selected
+          ? `Trein ${selected.id} geselecteerd: ${selected.from.name} naar ${selected.to.name}${selected.delayMin > 0 ? `, ${selected.delayMin} min vertraging` : ''}.`
+          : ''}
+      </div>
+
       {/* Masthead */}
       <div style={{ padding: '24px 20px 12px' }}>
         <div className="eyebrow" style={{ marginBottom: 4 }}>The Network · live</div>
@@ -111,6 +123,8 @@ export default function PulseView({ onOpenJourney, onOpenStation }: PulseViewPro
         <svg
           viewBox="0 0 400 520"
           preserveAspectRatio="xMidYMid meet"
+          role="img"
+          aria-label="Kaart van het Nederlandse spoornetwerk met live treinposities en verstoringen."
           style={{ width: '100%', height: 'auto', display: 'block', background: 'var(--bg-2)' }}
         >
           <defs>
@@ -180,7 +194,15 @@ export default function PulseView({ onOpenJourney, onOpenStation }: PulseViewPro
             const p = project(s.lat, s.lng);
             const major = MAJOR_STATIONS.includes(s.code);
             return (
-              <g key={s.code} style={{ cursor: 'pointer' }} onClick={() => onOpenStation(s)}>
+              <g
+                key={s.code}
+                role="button"
+                tabIndex={0}
+                aria-label={`Station ${s.name}`}
+                style={{ cursor: 'pointer' }}
+                onClick={() => onOpenStation(s)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenStation(s); } }}
+              >
                 <circle
                   cx={p.x * 400} cy={p.y * 520}
                   r={major ? 3.5 : 2}
@@ -211,10 +233,15 @@ export default function PulseView({ onOpenJourney, onOpenStation }: PulseViewPro
             const color = tr.delayMin >= 3 ? 'var(--accent)' : tr.delayMin >= 1 ? 'var(--warn)' : 'var(--ink)';
             const isSel = selected?.id === tr.id;
             return (
-              <g key={tr.id}
+              <g
+                key={tr.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`Trein ${tr.id} (${tr.cat}): ${tr.from.name} → ${tr.to.name}${tr.delayMin > 0 ? `, ${tr.delayMin} min vertraging` : ', op tijd'}`}
                 transform={`translate(${x}, ${y}) rotate(${angle})`}
                 style={{ cursor: 'pointer' }}
                 onClick={() => setSelected(tr)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelected(tr); } }}
               >
                 <rect x={-5} y={-1.5} width={10} height={3} fill={color} rx="0.5" />
                 {isSel && <circle cx={0} cy={0} r={9} fill="none" stroke={color} strokeWidth="0.8" />}
@@ -242,7 +269,11 @@ export default function PulseView({ onOpenJourney, onOpenStation }: PulseViewPro
                   {selected.delayMin > 0 ? `+${selected.delayMin} MIN LATE` : 'ON TIME'} · {(selected.t * 100).toFixed(0)}% ALONG ROUTE
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} style={{ padding: 4, color: 'var(--ink-3)' }}>
+              <button
+                onClick={() => setSelected(null)}
+                aria-label="Sluit treinkaart"
+                style={{ padding: 4, color: 'var(--ink-3)' }}
+              >
                 <IconClose style={{ width: 18, height: 18 }} />
               </button>
             </div>
@@ -336,7 +367,12 @@ function NetStat({ big, label, borderLeft }: { big: string; label: string; borde
 }
 
 function WeatherGlyph({ type }: { type: 'storm' | 'fog' | 'sun' }) {
-  const common = { width: 28, height: 28, style: { flexShrink: 0 } };
+  const labels: Record<string, string> = {
+    storm: 'Onweerswaarschuwing',
+    fog:   'Mist',
+    sun:   'Helder, geen verstoringen',
+  };
+  const common = { width: 28, height: 28, role: 'img' as const, 'aria-label': labels[type], style: { flexShrink: 0 } };
   if (type === 'storm') return (
     <svg {...common} viewBox="0 0 28 28" fill="none">
       <path d="M7 15a5 5 0 115-8 6 6 0 0110 3 4 4 0 01-2 7H8a5 5 0 01-1-2z" stroke="var(--accent)" strokeWidth="1.3" />

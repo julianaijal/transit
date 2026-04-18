@@ -50,7 +50,7 @@ export function StationSearch({ onBack, onPick }: { onBack: () => void; onPick: 
     <div className="view fade-up">
       <div style={{ padding: '18px 20px 6px' }}>
         <button onClick={onBack} style={{ padding: '6px 0', color: 'var(--ink-2)', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <IconBack style={{ width: 18, height: 18 }} />
+          <IconBack aria-hidden="true" style={{ width: 18, height: 18 }} />
           <span className="eyebrow" style={{ color: 'var(--ink-2)' }}>Back</span>
         </button>
       </div>
@@ -65,8 +65,10 @@ export function StationSearch({ onBack, onPick }: { onBack: () => void; onPick: 
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '14px 16px', background: 'var(--bg-2)', borderRadius: 14, border: '1px solid var(--line)',
         }}>
-          <IconSearch style={{ width: 18, height: 18, color: 'var(--ink-3)' }} />
+          <IconSearch aria-hidden="true" style={{ width: 18, height: 18, color: 'var(--ink-3)' }} />
+          <label htmlFor="station-search" className="sr-only">Search stations</label>
           <input
+            id="station-search"
             autoFocus
             value={q}
             onChange={e => setQ(e.target.value)}
@@ -77,8 +79,8 @@ export function StationSearch({ onBack, onPick }: { onBack: () => void; onPick: 
             }}
           />
           {q && (
-            <button onClick={() => setQ('')} style={{ color: 'var(--ink-3)' }}>
-              <IconClose style={{ width: 16, height: 16 }} />
+            <button onClick={() => setQ('')} aria-label="Clear search" style={{ color: 'var(--ink-3)' }}>
+              <IconClose aria-hidden="true" style={{ width: 16, height: 16 }} />
             </button>
           )}
         </div>
@@ -151,7 +153,7 @@ export default function StationView({ station, tweaks, onBack, onOpenJourney }: 
     <div className="view fade-up">
       <div style={{ padding: '18px 20px 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <button onClick={onBack} style={{ padding: '6px 0', color: 'var(--ink-2)', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <IconBack style={{ width: 18, height: 18 }} />
+          <IconBack aria-hidden="true" style={{ width: 18, height: 18 }} />
           <span className="eyebrow" style={{ color: 'var(--ink-2)' }}>Back</span>
         </button>
         <span className="now-pill">
@@ -161,12 +163,17 @@ export default function StationView({ station, tweaks, onBack, onOpenJourney }: 
 
       <div style={{ padding: '10px 20px 20px' }}>
         <div className="eyebrow" style={{ marginBottom: 4 }}>Station · {station.code}</div>
-        <div className="serif" style={{ fontSize: 40, lineHeight: 1, letterSpacing: '-0.02em' }}>
+        <h1 className="serif" style={{ fontSize: 40, lineHeight: 1, letterSpacing: '-0.02em' }}>
           {station.name}
-        </div>
+        </h1>
         <div className="serif" style={{ fontSize: 15, color: 'var(--ink-2)', marginTop: 8, fontStyle: 'italic' }}>
           {departures ? `${departures.length} departures in the next hour.` : 'loading live board…'}
         </div>
+      </div>
+
+      {/* Departures live region */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {departures ? `${departures.length} departures loaded` : ''}
       </div>
 
       <div style={{ padding: '0 20px' }}>

@@ -285,11 +285,11 @@ function BaselineBlock({ rhythm }: { rhythm: typeof USER_RHYTHM }) {
 function StatCell({ big, suffix, label }: { big: string; suffix: string; label: string }) {
   return (
     <dl className="card" style={{ padding: '12px 14px' }}>
-      <dd style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+      <dt className="eyebrow" style={{ marginBottom: 4 }}>{label}</dt>
+      <dd style={{ display: 'flex', alignItems: 'baseline', gap: 2, margin: 0 }}>
         <span className="serif num" style={{ fontSize: 32, lineHeight: 1, letterSpacing: '-0.02em' }}>{big}</span>
         <span className="mono" style={{ fontSize: 11, color: 'var(--ink-3)' }}>{suffix}</span>
       </dd>
-      <dt className="eyebrow" style={{ marginTop: 4 }}>{label}</dt>
     </dl>
   );
 }

@@ -74,7 +74,7 @@ export function StationSearch({ onBack, onPick }: { onBack: () => void; onPick: 
             onChange={e => setQ(e.target.value)}
             placeholder="Amsterdam, Utrecht, ASD…"
             style={{
-              flex: 1, background: 'transparent', border: 0, outline: 'none',
+              flex: 1, background: 'transparent', border: 0,
               fontSize: 16, color: 'var(--ink)', fontFamily: 'inherit',
             }}
           />
@@ -87,7 +87,7 @@ export function StationSearch({ onBack, onPick }: { onBack: () => void; onPick: 
       </div>
       <div style={{ padding: '20px 20px 0' }}>
         {results.map(s => (
-          <button key={s.code} onClick={() => onPick(s)} style={{
+          <button key={s.code} onClick={() => onPick(s)} aria-label={`${s.name} (${s.code})`} style={{
             width: '100%', padding: '14px 0', display: 'flex', justifyContent: 'space-between',
             alignItems: 'center', borderBottom: '1px solid var(--line-2)', textAlign: 'left',
           }}>
@@ -186,12 +186,14 @@ export default function StationView({ station, tweaks, onBack, onOpenJourney }: 
             crowdingStyle={tweaks.crowdingStyle}
           />
         )) : (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} style={{ padding: '18px 0', borderBottom: '1px solid var(--line-2)' }}>
-              <div className="skeleton" style={{ height: 22, width: 70, marginBottom: 8 }} />
-              <div className="skeleton" style={{ height: 18, width: '60%' }} />
-            </div>
-          ))
+          <div aria-busy="true" aria-label="Vertrektijden laden…">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} style={{ padding: '18px 0', borderBottom: '1px solid var(--line-2)' }}>
+                <div className="skeleton" style={{ height: 22, width: 70, marginBottom: 8 }} />
+                <div className="skeleton" style={{ height: 18, width: '60%' }} />
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

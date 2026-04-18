@@ -23,10 +23,14 @@ export function crowdingColor(c: number, invert = false): string {
 export default function CrowdingStrip({ crowding, style = 'bars', invert = false, size = 'md' }: CrowdingStripProps) {
   const h = size === 'sm' ? 14 : 22;
   const textMuted = invert ? 'color-mix(in oklab, var(--bg), transparent 50%)' : 'var(--ink-3)';
+  const srSummary = crowding.map((c, i) =>
+    `car ${i + 1} ${c < 0.4 ? 'quiet' : c < 0.75 ? 'moderate' : 'busy'}`
+  ).join(', ');
 
   if (style === 'dots') {
     return (
       <div style={{ display: 'flex', gap: 6 }}>
+        <span className="sr-only">Carriage occupancy: {srSummary}</span>
         {crowding.map((c, i) => (
           <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
             <div style={{ display: 'flex', gap: 2 }}>
@@ -49,6 +53,7 @@ export default function CrowdingStrip({ crowding, style = 'bars', invert = false
   if (style === 'heatmap') {
     return (
       <div>
+        <span className="sr-only">Carriage occupancy: {srSummary}</span>
         <div style={{ display: 'flex', gap: 3, height: h, borderRadius: 4, overflow: 'hidden' }}>
           {crowding.map((c, i) => (
             <div key={i} style={{ flex: 1, background: crowdingColor(c, invert), opacity: 0.35 + c * 0.65 }} />
@@ -68,6 +73,7 @@ export default function CrowdingStrip({ crowding, style = 'bars', invert = false
   // bars (default)
   return (
     <div>
+      <span className="sr-only">Carriage occupancy: {srSummary}</span>
       <div style={{ display: 'flex', gap: 4, alignItems: 'flex-end', height: h }}>
         {crowding.map((c, i) => (
           <div key={i} style={{

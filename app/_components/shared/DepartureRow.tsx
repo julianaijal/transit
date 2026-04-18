@@ -32,7 +32,7 @@ export default function DepartureRow({ d, onClick, verbose = false }: DepartureR
           <span className="chip">{d.trainCategory}</span>
           <span className="mono" style={{ fontSize: 10.5, color: 'var(--ink-3)' }}>TRACK {d.actualTrack}</span>
           {d.trackChanged && <span className="chip warn">changed</span>}
-          {d.cancelled && <span className="chip" style={{ color: 'var(--bad)' }}>cancelled</span>}
+          {d.cancelled && <span className="chip" style={{ color: 'var(--bad-text)' }}>cancelled</span>}
         </div>
         <div className="serif" style={{ fontSize: 17, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {d.direction}
@@ -43,7 +43,7 @@ export default function DepartureRow({ d, onClick, verbose = false }: DepartureR
           </div>
         )}
       </div>
-      <IconArrow style={{ width: 14, height: 14, color: 'var(--ink-3)' }} />
+      <IconArrow aria-hidden="true" style={{ width: 14, height: 14, color: 'var(--ink-3)' }} />
     </button>
   );
 }

@@ -38,7 +38,7 @@ export default function FullDepartureRow({ d, onOpen, verbose = false, crowdingS
           </div>
         )}
         {d.delayMinutes === 0 && !d.cancelled && (
-          <div className="mono" style={{ fontSize: 10.5, color: 'var(--ok)', marginTop: 5 }}>on time</div>
+          <div className="mono" style={{ fontSize: 10.5, color: 'var(--ok-text)', marginTop: 5 }}>on time</div>
         )}
       </div>
 
@@ -48,7 +48,7 @@ export default function FullDepartureRow({ d, onOpen, verbose = false, crowdingS
           <span className="mono" style={{ fontSize: 10.5, color: 'var(--ink-3)' }}>TRACK {d.actualTrack}</span>
           {d.trackChanged && <span className="chip warn">track changed</span>}
           {d.cancelled && (
-            <span className="chip" style={{ color: 'var(--bad)', background: 'color-mix(in oklab, var(--bad) 14%, transparent)' }}>cancelled</span>
+            <span className="chip" style={{ color: 'var(--bad-text)', background: 'color-mix(in oklab, var(--bad) 14%, transparent)' }}>cancelled</span>
           )}
         </div>
         <div className="serif" style={{ fontSize: 19, lineHeight: 1.2 }}>{d.direction}</div>
@@ -59,7 +59,7 @@ export default function FullDepartureRow({ d, onOpen, verbose = false, crowdingS
         )}
       </div>
 
-      <IconArrow style={{ width: 14, height: 14, color: 'var(--ink-3)', marginTop: 10 }} />
+      <IconArrow aria-hidden="true" style={{ width: 14, height: 14, color: 'var(--ink-3)', marginTop: 10 }} />
     </button>
   );
 }

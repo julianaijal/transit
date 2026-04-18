@@ -11,7 +11,11 @@ export async function getStationCodes(query: string): Promise<IStation[]> {
     }
   );
   const data = await res.json();
-  return data.payload ?? [];
+  return (data.payload ?? []).map((s: { UICCode: string; namen: { lang: string }; code: string }) => ({
+    id: s.UICCode,
+    name: s.namen.lang,
+    code: s.code,
+  }));
 }
 
 export async function fetchDepartureData(stationCode: string): Promise<IDepartures> {

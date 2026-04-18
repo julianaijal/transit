@@ -382,6 +382,8 @@ h1, h2, h3, h4, h5, h6 { font: inherit; }
   .fade-up { animation: none; }
   .skeleton { animation: none; opacity: 0.55; }
   @keyframes pulseDot { 0%, 100% { box-shadow: none; } }
+  .pulse-sidebar-item { transition: none; }
+  .tabbar button { transition: none; }
 }
 
 /* ── Chip ── */

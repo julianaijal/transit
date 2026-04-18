@@ -1,5 +1,7 @@
 # Transit
 
+> This project is a test bed for [Claude design](https://claude.ai).
+
 Real-time train departure app for Dutch train stations, built with Next.js 15 and the NS (Nederlandse Spoorwegen) API.
 
 ## What it does

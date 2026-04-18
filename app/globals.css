@@ -54,7 +54,7 @@ html, body {
 }
 
 body {
-  font-size: 15px;
+  font-size: 0.9375rem; /* 15/16 */
   line-height: 1.45;
   letter-spacing: -0.01em;
 }
@@ -156,7 +156,7 @@ body {
     padding: 10px 12px;
     border-radius: 10px;
     color: var(--ink-3);
-    font-size: 14px;
+    font-size: 0.875rem; /* 14/16 */
     font-weight: 500;
     transition: color 0.12s, background 0.12s;
     width: 100%;
@@ -210,7 +210,7 @@ body {
 
 .eyebrow {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
+  font-size: 0.65625rem; /* 10.5/16 */
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -271,7 +271,7 @@ h1, h2, h3, h4, h5, h6 { font: inherit; }
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   padding: 8px 4px; border-radius: 16px;
   color: var(--ink-3);
-  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+  font-size: 0.625rem; /* 10/16 */ letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
   transition: color 0.15s, background 0.15s;
 }
 .tabbar button[data-active="true"] {
@@ -295,7 +295,7 @@ h1, h2, h3, h4, h5, h6 { font: inherit; }
 }
 .section-title h2 {
   font-family: 'Instrument Serif', serif;
-  font-weight: 400; font-size: 26px; line-height: 1.1; letter-spacing: -0.015em;
+  font-weight: 400; font-size: 1.625rem; /* 26/16 */ line-height: 1.5; letter-spacing: -0.015em;
 }
 
 /* ── Cards ── */
@@ -308,7 +308,7 @@ h1, h2, h3, h4, h5, h6 { font: inherit; }
 /* ── Now pill ── */
 .now-pill {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 0.65625rem; /* 10.5/16 */ letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--accent); font-family: 'JetBrains Mono', monospace; font-weight: 500;
 }
 
@@ -333,7 +333,7 @@ h1, h2, h3, h4, h5, h6 { font: inherit; }
   box-shadow: 0 20px 60px rgba(0,0,0,0.18);
   z-index: 100;
   padding: 16px;
-  font-size: 13px;
+  font-size: 0.8125rem; /* 13/16 */
 }
 
 /* ── Rhythm desktop 2-column ── */
@@ -390,14 +390,14 @@ h1, h2, h3, h4, h5, h6 { font: inherit; }
 .chip {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 8px; border-radius: 100px;
-  font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 500;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65625rem; /* 10.5/16 */ font-weight: 500;
   letter-spacing: 0.04em;
   background: var(--bg-3); color: var(--ink-2);
   border: 1px solid var(--line);
 }
 .chip.accent { background: var(--accent-dim); color: var(--accent); border-color: transparent; }
 .chip.ok     { background: color-mix(in oklab, var(--ok) 14%, transparent); color: var(--ok); border-color: transparent; }
-.chip.warn   { background: color-mix(in oklab, var(--warn) 18%, transparent); color: color-mix(in oklab, var(--warn), black 25%); border-color: transparent; }
+.chip.warn   { background: color-mix(in oklab, var(--warn) 18%, transparent); color: var(--warn-text); border-color: transparent; }
 
 /* ── Scrollbar ── */
 .view::-webkit-scrollbar { width: 0; }

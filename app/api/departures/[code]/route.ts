@@ -1,18 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { IDeparture } from '../../../interfaces/interfaces';
+import { rateLimit, getClientIp } from '../../../_lib/rateLimit';
 
 const BASE_URL = 'https://gateway.apiportal.ns.nl';
 const API_KEY = process.env.NS_API ?? '';
+const CODE_RE = /^[A-Z0-9]{2,7}$/;
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  const ip = getClientIp(req);
+  const { allowed } = rateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   const { code } = await params;
+  if (!CODE_RE.test(code.toUpperCase())) {
+    return NextResponse.json({ error: 'Invalid station code' }, { status: 400 });
+  }
+  const safeCode = code.toUpperCase();
 
   try {
     const res = await fetch(
-      `${BASE_URL}/reisinformatie-api/api/v2/departures?station=${encodeURIComponent(code)}&maxJourneys=15`,
+      `${BASE_URL}/reisinformatie-api/api/v2/departures?station=${encodeURIComponent(safeCode)}&maxJourneys=15`,
       {
         headers: { 'Ocp-Apim-Subscription-Key': API_KEY },
         next: { revalidate: 30 },
@@ -44,7 +56,7 @@ export async function GET(
       const actualTrack = d.actualTrack ?? plannedTrack;
 
       return {
-        id: `${code}-${i}-${d.product.number}`,
+        id: `${safeCode}-${i}-${d.product.number}`,
         direction: d.direction,
         plannedDateTime: d.plannedDateTime,
         actualDateTime: d.actualDateTime ?? d.plannedDateTime,
@@ -55,7 +67,6 @@ export async function GET(
         trackChanged: plannedTrack !== actualTrack && plannedTrack !== '',
         cancelled: d.cancelled ?? false,
         trainId: d.product.number,
-        // crowding not available without vehicle subscription — left empty
       } satisfies IDeparture;
     });
 

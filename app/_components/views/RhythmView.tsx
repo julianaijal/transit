@@ -80,6 +80,9 @@ export default function RhythmView({ tweaks, onOpenJourney }: RhythmViewProps) {
   const timeLabel = now.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
   const dateLabel = now.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
 
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning.' : hour < 18 ? 'Good afternoon.' : 'Good evening.';
+
   return (
     <div className="view fade-up">
       {/* Masthead — full width */}
@@ -87,7 +90,7 @@ export default function RhythmView({ tweaks, onOpenJourney }: RhythmViewProps) {
         <div>
           <div className="eyebrow" style={{ marginBottom: 4 }}>{dateLabel}</div>
           <h1 className="serif" style={{ fontSize: 34, lineHeight: 1, letterSpacing: '-0.02em' }}>
-            Good morning.
+            {greeting}
           </h1>
           <div className="serif" style={{ fontSize: 18, color: 'var(--ink-2)', marginTop: 2, fontStyle: 'italic' }}>
             You have a train to catch.

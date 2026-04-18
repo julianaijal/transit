@@ -81,7 +81,7 @@ export default function RhythmView({ tweaks, onOpenJourney }: RhythmViewProps) {
   const dateLabel = now.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' });
 
   const hour = now.getHours();
-  const greeting = hour < 12 ? 'Good morning.' : hour < 18 ? 'Good afternoon.' : 'Good evening.';
+  const greeting = hour < 6 ? 'Good night.' : hour < 12 ? 'Good morning.' : hour < 18 ? 'Good afternoon.' : 'Good evening.';
 
   return (
     <div className="view fade-up">
